@@ -1,0 +1,44 @@
+{
+  // UPGRAI Sales – Cloudflare Worker (API, MCP, OAuth, Workflows) + statische Oberfläche
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "upgrai-sales",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*", "/mcp", "/mcp/*", "/authorize", "/oauth/*", "/register", "/.well-known/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "upgrai-sales",
+      // Vor dem ersten Deploy: `wrangler d1 create upgrai-sales` und ID hier eintragen
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "kv_namespaces": [
+    // Vor dem ersten Deploy: `wrangler kv namespace create OAUTH_KV` und ID hier eintragen
+    { "binding": "OAUTH_KV", "id": "00000000000000000000000000000000" }
+  ],
+  "workflows": [
+    { "name": "lead-pipeline", "binding": "LEAD_PIPELINE", "class_name": "LeadPipeline" }
+  ],
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "rules": [{ "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
+  "vars": {
+    "ENVIRONMENT": "development",
+    "PUBLIC_URL": "http://localhost:8787",
+    // Nur lokal: angemeldeter Benutzer ohne Cloudflare Access
+    "DEV_USER_EMAIL": "dev@up-grai.de",
+    // Diese Adressen werden beim ersten Login Inhaber der vorkonfigurierten Arbeitsbereiche
+    "OWNER_EMAILS": "dev@up-grai.de",
+    // Produktion: Cloudflare-Access-Team-Domain (z. B. upgrai.cloudflareaccess.com) und Application-AUD
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  },
+  "observability": { "enabled": true }
+}

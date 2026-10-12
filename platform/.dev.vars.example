@@ -1,0 +1,5 @@
+# Kopieren nach .dev.vars (lokal) bzw. als Secret setzen: wrangler secret put ENCRYPTION_KEY
+# 32 zufällige Bytes, Base64:  node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+ENCRYPTION_KEY=
+# Mindestens 32 Zeichen, signiert gemerkte OAuth-Zustimmungen
+CONSENT_SECRET=
